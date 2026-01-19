@@ -48,7 +48,11 @@ A full-stack order management application built with modern technologies.
 
 ---
 
-## API Endpoints
+## API Documentation
+
+Base URL: `https://ecommerce-order-management-3o5p.onrender.com`
+
+### Endpoints Overview
 
 | Method | URL | Description |
 |--------|-----|-------------|
@@ -58,6 +62,255 @@ A full-stack order management application built with modern technologies.
 | PUT | `/api/orders/:id` | Update order |
 | DELETE | `/api/orders/:id` | Delete order |
 | GET | `/api/orders/products/all` | Get all products |
+| GET | `/health` | Health check |
+
+### GET /api/orders
+
+Get all orders with their associated products.
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "order_description": "Office Equipment Order",
+      "created_at": "2026-01-19T10:30:00.000Z",
+      "products": [
+        {
+          "id": 1,
+          "product_name": "HP laptop",
+          "product_description": "This is HP laptop"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### GET /api/orders/:id
+
+Get a single order by ID.
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "order_description": "Office Equipment Order",
+    "created_at": "2026-01-19T10:30:00.000Z",
+    "products": [
+      {
+        "id": 1,
+        "product_name": "HP laptop",
+        "product_description": "This is HP laptop"
+      }
+    ]
+  }
+}
+```
+
+**Error Response (404):**
+```json
+{
+  "success": false,
+  "message": "Order not found"
+}
+```
+
+### POST /api/orders
+
+Create a new order.
+
+**Request Body:**
+```json
+{
+  "orderDescription": "New Office Equipment",
+  "productIds": [1, 2]
+}
+```
+
+**Validation Rules:**
+- `orderDescription`: Required, 1-100 characters
+- `productIds`: Required, non-empty array of valid product IDs
+
+**Response (201):**
+```json
+{
+  "success": true,
+  "message": "Order created successfully",
+  "data": {
+    "id": 2,
+    "order_description": "New Office Equipment",
+    "created_at": "2026-01-19T12:00:00.000Z",
+    "products": [
+      {
+        "id": 1,
+        "product_name": "HP laptop",
+        "product_description": "This is HP laptop"
+      },
+      {
+        "id": 2,
+        "product_name": "lenovo laptop",
+        "product_description": "This is lenovo"
+      }
+    ]
+  }
+}
+```
+
+**Error Response (400):**
+```json
+{
+  "success": false,
+  "message": "Validation failed",
+  "errors": [
+    {
+      "field": "orderDescription",
+      "message": "Order description is required"
+    }
+  ]
+}
+```
+
+### PUT /api/orders/:id
+
+Update an existing order.
+
+**Request Body:**
+```json
+{
+  "orderDescription": "Updated Order Description",
+  "productIds": [1, 3, 4]
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Order updated successfully",
+  "data": {
+    "id": 1,
+    "order_description": "Updated Order Description",
+    "created_at": "2026-01-19T10:30:00.000Z",
+    "products": [
+      {
+        "id": 1,
+        "product_name": "HP laptop",
+        "product_description": "This is HP laptop"
+      },
+      {
+        "id": 3,
+        "product_name": "Car",
+        "product_description": "This is Car"
+      },
+      {
+        "id": 4,
+        "product_name": "Bike",
+        "product_description": "This is Bike"
+      }
+    ]
+  }
+}
+```
+
+### DELETE /api/orders/:id
+
+Delete an order by ID.
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Order deleted successfully"
+}
+```
+
+**Error Response (404):**
+```json
+{
+  "success": false,
+  "message": "Order not found"
+}
+```
+
+### GET /api/orders/products/all
+
+Get all available products.
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "product_name": "HP laptop",
+      "product_description": "This is HP laptop"
+    },
+    {
+      "id": 2,
+      "product_name": "lenovo laptop",
+      "product_description": "This is lenovo"
+    },
+    {
+      "id": 3,
+      "product_name": "Car",
+      "product_description": "This is Car"
+    },
+    {
+      "id": 4,
+      "product_name": "Bike",
+      "product_description": "This is Bike"
+    }
+  ]
+}
+```
+
+### GET /health
+
+Health check endpoint.
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Server is running",
+  "timestamp": "2026-01-19T12:00:00.000Z"
+}
+```
+
+### Error Responses
+
+All endpoints return consistent error responses:
+
+**400 Bad Request** - Validation errors
+```json
+{
+  "success": false,
+  "message": "Validation failed",
+  "errors": [...]
+}
+```
+
+**404 Not Found** - Resource not found
+```json
+{
+  "success": false,
+  "message": "Order not found"
+}
+```
+
+**500 Internal Server Error** - Server errors
+```json
+{
+  "success": false,
+  "message": "Internal server error"
+}
+```
 
 ---
 
