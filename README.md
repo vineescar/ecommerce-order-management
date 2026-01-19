@@ -538,6 +538,7 @@ npm run format   # Format code with Prettier
 2. **Tailwind CSS:** Chose Tailwind for rapid UI development over component libraries like Material UI
 3. **Express vs NestJS:** Used Express for simplicity; NestJS would provide more structure for larger applications
 4. **React Hook Form:** Selected for form handling due to good TypeScript support and performance
+5. **Validation Co-location:** Validation rules are defined in the routes file alongside route definitions using `express-validator`. This approach keeps related code together and is appropriate for this project size. For larger applications, validation could be extracted to a separate `validators/` directory
 
 ### Testability
 The codebase is designed with testability in mind:
