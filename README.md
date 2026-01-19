@@ -4,8 +4,8 @@ A full-stack order management application built with modern technologies.
 
 ## Live Demo
 
-- **Frontend:** [https://your-app.vercel.app](https://your-app.vercel.app)
-- **Backend API:** [https://your-api.onrender.com](https://your-api.onrender.com)
+- **Frontend:** [https://ecommerce-order-management-lnb4.vercel.app](https://ecommerce-order-management-lnb4.vercel.app)
+- **Backend API:** [https://ecommerce-order-management-3o5p.onrender.com](https://ecommerce-order-management-3o5p.onrender.com)
 
 ## Tech Stack
 
@@ -92,7 +92,7 @@ A full-stack order management application built with modern technologies.
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ecommerce-order-management.git
+git clone https://github.com/vineescar/ecommerce-order-management.git
 cd ecommerce-order-management
 
 # Start all services
