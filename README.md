@@ -157,42 +157,24 @@ npm run dev
 
 ## Production Deployment
 
-### 1. Database Setup (Neon)
+The application is deployed using the following services:
 
-1. Create account at [neon.tech](https://neon.tech)
-2. Create a new project
-3. Go to **SQL Editor** and run the contents of `database/init.sql`
-4. Copy the connection string from **Dashboard**
+| Service | Platform | URL |
+|---------|----------|-----|
+| Database | Neon (PostgreSQL) | - |
+| Backend | Render | https://ecommerce-order-management-3o5p.onrender.com |
+| Frontend | Vercel | https://ecommerce-order-management-lnb4.vercel.app |
 
-### 2. Backend Deployment (Render)
+### Environment Variables
 
-1. Create account at [render.com](https://render.com)
-2. Click **New** → **Web Service**
-3. Connect your GitHub repository
-4. Configure:
-   - **Name:** ecommerce-backend
-   - **Root Directory:** backend
-   - **Runtime:** Node
-   - **Build Command:** `npm install && npm run build`
-   - **Start Command:** `npm start`
-5. Add Environment Variables:
-   - `NODE_ENV`: production
-   - `PORT`: 5000
-   - `DATABASE_URL`: (your Neon connection string)
-   - `CORS_ORIGIN`: (your Vercel frontend URL)
-6. Click **Create Web Service**
+**Backend (Render):**
+- `DATABASE_URL` - Neon PostgreSQL connection string
+- `NODE_ENV` - production
+- `PORT` - 5000
+- `CORS_ORIGIN` - Vercel frontend URL
 
-### 3. Frontend Deployment (Vercel)
-
-1. Create account at [vercel.com](https://vercel.com)
-2. Click **Add New** → **Project**
-3. Import your GitHub repository
-4. Configure:
-   - **Root Directory:** frontend
-   - **Framework Preset:** Vite
-5. Add Environment Variable:
-   - `VITE_API_URL`: (your Render backend URL + /api)
-6. Click **Deploy**
+**Frontend (Vercel):**
+- `VITE_API_URL` - Render backend URL + /api
 
 ---
 
