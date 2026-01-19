@@ -563,6 +563,8 @@ The codebase is designed with testability in mind:
 > **Cold Start Warning:** Free tier services (Render, Neon) may have cold starts.
 > The first request might take 10-30 seconds after inactivity.
 
+> **Environment Variables:** The `docker-compose.yml` file contains environment variables for local development convenience. In a production environment, sensitive credentials should never be committed to version control. Instead, use `.env` files (added to `.gitignore`), secret management services, or platform-specific environment variable configuration.
+
 ---
 
 ## License
