@@ -539,6 +539,14 @@ npm run format   # Format code with Prettier
 3. **Express vs NestJS:** Used Express for simplicity; NestJS would provide more structure for larger applications
 4. **React Hook Form:** Selected for form handling due to good TypeScript support and performance
 
+### Testability
+The codebase is designed with testability in mind:
+- **Separation of Concerns:** Controllers, routes, middleware, and database logic are in separate modules
+- **Modular Functions:** Each function has a single responsibility, making unit testing straightforward
+- **Dependency Injection Ready:** Database module can be easily mocked for testing
+- **TypeScript Interfaces:** Clear type definitions make it easier to create test fixtures and mocks
+- **Reusable Components:** Frontend components are isolated and can be tested independently
+
 ### Future Improvements
 - Add user authentication (JWT)
 - Implement pagination for orders list
