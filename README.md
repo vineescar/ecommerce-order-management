@@ -534,7 +534,7 @@ npm run format   # Format code with Prettier
 3. **Single User:** No multi-user/session management required
 
 ### Trade-offs
-1. **Raw SQL vs ORM:** Used raw SQL queries with `pg` library instead of an ORM (like Prisma) for simplicity and to demonstrate SQL knowledge
+1. **Raw SQL vs ORM:** Used raw SQL queries with `pg` library instead of an ORM (like Prisma or TypeORM). While ORMs provide convenience and abstraction, raw SQL was chosen intentionally to demonstrate SQL proficiency and provide better visibility into database operations
 2. **Tailwind CSS:** Chose Tailwind for rapid UI development over component libraries like Material UI
 3. **Express vs NestJS:** Used Express for simplicity; NestJS would provide more structure for larger applications
 4. **React Hook Form:** Selected for form handling due to good TypeScript support and performance
