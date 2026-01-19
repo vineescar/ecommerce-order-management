@@ -1,11 +1,10 @@
 import { Pool, PoolClient, QueryResult, QueryResultRow } from 'pg';
 
+const isLocalhost = process.env.DATABASE_URL?.includes('localhost');
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl:
-    process.env.NODE_ENV === 'production'
-      ? { rejectUnauthorized: false }
-      : false,
+  ssl: isLocalhost ? false : { rejectUnauthorized: false },
 });
 
 // Test database connection
