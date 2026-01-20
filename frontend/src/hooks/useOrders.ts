@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
-import { Order, ApiResponse, ApiErrorResponse } from '../types';
+import { Order, OrderWithProducts, ApiResponse, ApiErrorResponse } from '../types';
 
 interface UseOrdersReturn {
   orders: Order[];
@@ -38,15 +38,15 @@ export const useOrders = (): UseOrdersReturn => {
   return { orders, isLoading, error, refetch: fetchOrders, clearError };
 };
 
-// Hook to get a single order
+// Hook to get a single order (returns full products for edit view)
 interface UseOrderReturn {
-  order: Order | null;
+  order: OrderWithProducts | null;
   isLoading: boolean;
   error: string | null;
 }
 
 export const useOrder = (id: string | undefined): UseOrderReturn => {
-  const [order, setOrder] = useState<Order | null>(null);
+  const [order, setOrder] = useState<OrderWithProducts | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,7 +60,7 @@ export const useOrder = (id: string | undefined): UseOrderReturn => {
       try {
         setIsLoading(true);
         setError(null);
-        const response = await api.get<ApiResponse<Order>>(`/orders/${id}`);
+        const response = await api.get<ApiResponse<OrderWithProducts>>(`/orders/${id}`);
         setOrder(response.data.data);
       } catch (err) {
         const apiError = err as ApiErrorResponse;
