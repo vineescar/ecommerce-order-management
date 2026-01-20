@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Product, OrderFormData, Order } from '../../types';
+import { Product, OrderFormData, OrderWithProducts } from '../../types';
 import Button from '../common/Button';
 import Input from '../common/Input';
 import Spinner from '../common/Spinner';
@@ -13,7 +13,7 @@ interface OrderFormProps {
   onSubmit: (data: OrderFormData) => Promise<void>;
   onCancel: () => void;
   isSubmitting: boolean;
-  initialData?: Order | null;
+  initialData?: OrderWithProducts | null;
 }
 
 const OrderForm: React.FC<OrderFormProps> = ({
