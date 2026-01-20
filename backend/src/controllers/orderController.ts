@@ -7,12 +7,13 @@ import {
   UpdateOrderDto,
   OrderRow,
   Product,
+  ApiResponse,
 } from '../types';
 
 // GET /api/orders - Get all orders with products
 export const getAllOrders = async (
   _req: Request,
-  res: Response,
+  res: Response<ApiResponse<OrderWithProducts[]>>,
   next: NextFunction
 ): Promise<void> => {
   try {
@@ -56,8 +57,8 @@ export const getAllOrders = async (
 
 // GET /api/orders/:id - Get order by ID
 export const getOrderById = async (
-  req: Request,
-  res: Response,
+  req: Request<{ id: string }>,
+  res: Response<ApiResponse<OrderWithProducts>>,
   next: NextFunction
 ): Promise<void> => {
   try {
@@ -111,8 +112,8 @@ export const getOrderById = async (
 
 // POST /api/orders - Create new order
 export const createOrder = async (
-  req: Request<object, object, CreateOrderDto>,
-  res: Response,
+  req: Request<object, ApiResponse<OrderWithProducts>, CreateOrderDto>,
+  res: Response<ApiResponse<OrderWithProducts>>,
   next: NextFunction
 ): Promise<void> => {
   const client = await db.getClient();
@@ -205,8 +206,8 @@ export const createOrder = async (
 
 // PUT /api/orders/:id - Update order
 export const updateOrder = async (
-  req: Request<{ id: string }, object, UpdateOrderDto>,
-  res: Response,
+  req: Request<{ id: string }, ApiResponse<OrderWithProducts>, UpdateOrderDto>,
+  res: Response<ApiResponse<OrderWithProducts>>,
   next: NextFunction
 ): Promise<void> => {
   const client = await db.getClient();
@@ -318,8 +319,8 @@ export const updateOrder = async (
 
 // DELETE /api/orders/:id - Delete order
 export const deleteOrder = async (
-  req: Request,
-  res: Response,
+  req: Request<{ id: string }>,
+  res: Response<ApiResponse<null>>,
   next: NextFunction
 ): Promise<void> => {
   try {
@@ -347,7 +348,7 @@ export const deleteOrder = async (
 // GET /api/products - Get all products (helper endpoint)
 export const getAllProducts = async (
   _req: Request,
-  res: Response,
+  res: Response<ApiResponse<Product[]>>,
   next: NextFunction
 ): Promise<void> => {
   try {
