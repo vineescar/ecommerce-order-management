@@ -4,8 +4,9 @@ A full-stack order management application built with modern technologies.
 
 ## Live Demo
 
-- **Frontend:** [https://ecommerce-order-management-lnb4.vercel.app](https://ecommerce-order-management-lnb4.vercel.app)
+- **Frontend:** [https://ecommerce-order-management-five.vercel.app](https://ecommerce-order-management-five.vercel.app)
 - **Backend API:** [https://ecommerce-order-management-3o5p.onrender.com](https://ecommerce-order-management-3o5p.onrender.com)
+- **Repository:** [https://github.com/vineescar/ecommerce-order-management](https://github.com/vineescar/ecommerce-order-management)
 
 > **Note:** If you encounter any errors or slow loading on the live demo, please reload the page. The backend is deployed on Render's free tier which has limited CPU resources and may experience cold starts after periods of inactivity.
 
@@ -413,7 +414,7 @@ The application is deployed using the following services:
 |---------|----------|-----|
 | Database | Neon (PostgreSQL) | - |
 | Backend | Render | https://ecommerce-order-management-3o5p.onrender.com |
-| Frontend | Vercel | https://ecommerce-order-management-lnb4.vercel.app |
+| Frontend | Vercel | https://ecommerce-order-management-five.vercel.app |
 
 ### Environment Variables
 
