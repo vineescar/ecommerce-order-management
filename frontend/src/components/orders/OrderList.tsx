@@ -99,17 +99,10 @@ const OrderList: React.FC<OrderListProps> = ({
               <td className="px-6 py-4">
                 <span className="text-sm text-gray-900">{order.order_description}</span>
               </td>
-              <td className="px-6 py-4">
-                <div className="flex flex-wrap gap-1">
-                  {order.products.map((product) => (
-                    <span
-                      key={product.id}
-                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                    >
-                      {product.product_name}
-                    </span>
-                  ))}
-                </div>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  {order.product_count} {order.product_count === 1 ? 'product' : 'products'}
+                </span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <span className="text-sm text-gray-500">

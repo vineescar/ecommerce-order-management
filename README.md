@@ -7,6 +7,8 @@ A full-stack order management application built with modern technologies.
 - **Frontend:** [https://ecommerce-order-management-lnb4.vercel.app](https://ecommerce-order-management-lnb4.vercel.app)
 - **Backend API:** [https://ecommerce-order-management-3o5p.onrender.com](https://ecommerce-order-management-3o5p.onrender.com)
 
+> **Note:** If you encounter any errors or slow loading on the live demo, please reload the page. The backend is deployed on Render's free tier which has limited CPU resources and may experience cold starts after periods of inactivity.
+
 ## Tech Stack
 
 ### Backend
@@ -56,7 +58,7 @@ Base URL: `https://ecommerce-order-management-3o5p.onrender.com`
 
 | Method | URL | Description |
 |--------|-----|-------------|
-| GET | `/api/orders` | Get all orders with products |
+| GET | `/api/orders` | Get all orders with product count |
 | GET | `/api/orders/:id` | Get order by ID |
 | POST | `/api/orders` | Create new order |
 | PUT | `/api/orders/:id` | Update order |
@@ -66,7 +68,7 @@ Base URL: `https://ecommerce-order-management-3o5p.onrender.com`
 
 ### GET /api/orders
 
-Get all orders with their associated products.
+Get all orders with product count.
 
 **Response:**
 ```json
@@ -77,13 +79,7 @@ Get all orders with their associated products.
       "id": 1,
       "order_description": "Office Equipment Order",
       "created_at": "2026-01-19T10:30:00.000Z",
-      "products": [
-        {
-          "id": 1,
-          "product_name": "HP laptop",
-          "product_description": "This is HP laptop"
-        }
-      ]
+      "product_count": 3
     }
   ]
 }

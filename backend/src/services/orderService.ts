@@ -1,6 +1,13 @@
 import db from '../config/db';
 import { NotFoundError, BadRequestError } from '../utils/ApiError';
-import { OrderWithProducts, CreateOrderDto, UpdateOrderDto, OrderRow } from '../types';
+import {
+  OrderWithProducts,
+  OrderWithProductCount,
+  CreateOrderDto,
+  UpdateOrderDto,
+  OrderRow,
+  OrderListRow,
+} from '../types';
 
 const ORDER_WITH_PRODUCTS_QUERY = `
   SELECT
@@ -30,13 +37,24 @@ const mapRowToOrder = (row: OrderRow): OrderWithProducts => ({
 });
 
 export const orderService = {
-  getAllOrders: async (): Promise<OrderWithProducts[]> => {
-    const result = await db.query<OrderRow>(`
-      ${ORDER_WITH_PRODUCTS_QUERY}
+  getAllOrders: async (): Promise<OrderWithProductCount[]> => {
+    const result = await db.query<OrderListRow>(`
+      SELECT
+        o.id,
+        o.order_description,
+        o.created_at,
+        COUNT(opm.product_id)::int as product_count
+      FROM orders o
+      LEFT JOIN order_product_map opm ON o.id = opm.order_id
       GROUP BY o.id
       ORDER BY o.created_at DESC
     `);
-    return result.rows.map(mapRowToOrder);
+    return result.rows.map((row) => ({
+      id: row.id,
+      order_description: row.order_description,
+      created_at: row.created_at,
+      product_count: row.product_count,
+    }));
   },
 
   getOrderById: async (id: string): Promise<OrderWithProducts> => {

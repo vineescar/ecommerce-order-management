@@ -16,6 +16,10 @@ export interface OrderWithProducts extends Order {
   products: Product[];
 }
 
+export interface OrderWithProductCount extends Order {
+  product_count: number;
+}
+
 // Request DTOs
 export interface CreateOrderDto {
   orderDescription: string;
@@ -51,4 +55,11 @@ export interface OrderRow {
   order_description: string;
   created_at: Date;
   products: Product[] | null;
+}
+
+export interface OrderListRow {
+  id: number;
+  order_description: string;
+  created_at: Date;
+  product_count: number;
 }

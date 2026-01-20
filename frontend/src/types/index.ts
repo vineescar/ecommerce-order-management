@@ -5,8 +5,16 @@ export interface Product {
   product_description: string | null;
 }
 
-// Order types
+// Order types (for list view - with product count)
 export interface Order {
+  id: number;
+  order_description: string;
+  created_at: string;
+  product_count: number;
+}
+
+// Order with full products (for detail/edit view)
+export interface OrderWithProducts {
   id: number;
   order_description: string;
   created_at: string;

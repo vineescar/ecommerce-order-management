@@ -3,16 +3,17 @@ import { orderService } from '../services/orderService';
 import { productService } from '../services/productService';
 import {
   OrderWithProducts,
+  OrderWithProductCount,
   CreateOrderDto,
   UpdateOrderDto,
   Product,
   ApiResponse,
 } from '../types';
 
-// GET /api/orders - Get all orders with products
+// GET /api/orders - Get all orders with product count
 export const getAllOrders = async (
   _req: Request,
-  res: Response<ApiResponse<OrderWithProducts[]>>,
+  res: Response<ApiResponse<OrderWithProductCount[]>>,
   next: NextFunction
 ): Promise<void> => {
   try {
