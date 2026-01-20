@@ -26,6 +26,7 @@ A full-stack order management application built with modern technologies.
 - **Form Handling:** React Hook Form
 - **HTTP Client:** Axios
 - **Routing:** React Router v6
+- **Testing:** Vitest + React Testing Library
 - **Code Quality:** ESLint + Prettier
 
 ### DevOps
@@ -519,12 +520,15 @@ npm run format   # Format code with Prettier
 ### Frontend
 
 ```bash
-npm run dev      # Start Vite development server
-npm run build    # Build for production
-npm run preview  # Preview production build
-npm run lint     # Run ESLint
-npm run lint:fix # Fix ESLint errors
-npm run format   # Format code with Prettier
+npm run dev           # Start Vite development server
+npm run build         # Build for production
+npm run preview       # Preview production build
+npm run lint          # Run ESLint
+npm run lint:fix      # Fix ESLint errors
+npm run format        # Format code with Prettier
+npm test              # Run tests in watch mode
+npm run test:run      # Run tests once
+npm run test:coverage # Run tests with coverage report
 ```
 
 ---
@@ -561,6 +565,27 @@ Request → Route → Controller → Service → Database
 | **Controllers** | Handle HTTP request/response, delegate to services |
 | **Services** | Business logic, database queries, error handling |
 
+### Testing
+
+The frontend includes unit tests using **Vitest** and **React Testing Library**.
+
+**Test Coverage:**
+| Component | Tests | Description |
+|-----------|-------|-------------|
+| Button | 7 | Variants, loading state, disabled state, click events |
+| Alert | 9 | All alert types, styles, close button functionality |
+| Input | 12 | Labels, error states, ref forwarding, user events |
+| Spinner | 6 | Size variants, animation, custom classes |
+| OrderList | 13 | Rendering, filtering, empty states, edit/delete actions |
+
+**Run tests:**
+```bash
+cd frontend
+npm test              # Watch mode
+npm run test:run      # Single run
+npm run test:coverage # With coverage report
+```
+
 ### Testability
 The codebase is designed with testability in mind:
 - **Layered Architecture:** Controllers, services, and validators are in separate modules
@@ -572,7 +597,7 @@ The codebase is designed with testability in mind:
 ### Future Improvements
 - Add user authentication (JWT)
 - Implement pagination for orders list
-- Add unit and integration tests
+- Add backend unit and integration tests
 - Add product management (CRUD)
 - Implement order status tracking
 - Add export functionality (CSV/PDF)
