@@ -443,12 +443,8 @@ ecommerce-order-management/
 │   │   │   └── orderController.ts # HTTP request/response handlers
 │   │   ├── services/
 │   │   │   ├── index.ts           # Service exports
-│   │   │   ├── orderService.ts    # Order business logic
-│   │   │   └── productService.ts  # Product business logic
-│   │   ├── repositories/
-│   │   │   ├── index.ts           # Repository exports
-│   │   │   ├── orderRepository.ts # Order database queries
-│   │   │   └── productRepository.ts # Product database queries
+│   │   │   ├── orderService.ts    # Order business logic & database queries
+│   │   │   └── productService.ts  # Product business logic & database queries
 │   │   ├── validators/
 │   │   │   ├── index.ts           # Validator exports
 │   │   │   └── orderValidators.ts # Order validation rules
@@ -549,16 +545,17 @@ npm run format   # Format code with Prettier
 2. **Tailwind CSS:** Chose Tailwind for rapid UI development over component libraries like Material UI
 3. **Express vs NestJS:** Used Express for simplicity; NestJS would provide more structure for larger applications
 4. **React Hook Form:** Selected for form handling due to good TypeScript support and performance
+5. **Service Layer without Repository:** Database queries are handled directly in the service layer instead of a separate repository layer. Given the project size, this keeps the codebase simpler while still maintaining separation between HTTP handling (controllers) and business logic (services). For larger applications, a repository layer could be added to further isolate data access
 
 ### Architecture
 
 The backend follows a **layered architecture** pattern for better separation of concerns:
 
 ```
-Request → Route → Controller → Service → Repository → Database
-              ↓          ↓           ↓            ↓
-         Validation   HTTP      Business     Database
-                     handling    logic       queries
+Request → Route → Controller → Service → Database
+              ↓          ↓           ↓
+         Validation   HTTP      Business logic
+                     handling   & data access
 ```
 
 | Layer | Responsibility |
@@ -566,15 +563,13 @@ Request → Route → Controller → Service → Repository → Database
 | **Routes** | Define endpoints and apply validation middleware |
 | **Validators** | Input validation rules using express-validator |
 | **Controllers** | Handle HTTP request/response, delegate to services |
-| **Services** | Business logic, orchestration, error handling |
-| **Repositories** | Raw database queries, data access abstraction |
+| **Services** | Business logic, database queries, error handling |
 
 ### Testability
 The codebase is designed with testability in mind:
-- **Layered Architecture:** Controllers, services, repositories, and validators are in separate modules
-- **Repository Pattern:** Database queries are isolated, making it easy to mock for unit tests
-- **Service Layer:** Business logic can be tested independently of HTTP and database concerns
-- **Dependency Injection Ready:** Each layer can be easily mocked for testing
+- **Layered Architecture:** Controllers, services, and validators are in separate modules
+- **Service Layer:** Business logic can be tested independently of HTTP concerns
+- **Dependency Injection Ready:** Database module can be easily mocked for testing
 - **TypeScript Interfaces:** Clear type definitions make it easier to create test fixtures and mocks
 - **Reusable Components:** Frontend components are isolated and can be tested independently
 
