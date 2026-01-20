@@ -440,7 +440,18 @@ ecommerce-order-management/
 │   │   ├── config/
 │   │   │   └── db.ts              # Database connection & initialization
 │   │   ├── controllers/
-│   │   │   └── orderController.ts # Request handlers
+│   │   │   └── orderController.ts # HTTP request/response handlers
+│   │   ├── services/
+│   │   │   ├── index.ts           # Service exports
+│   │   │   ├── orderService.ts    # Order business logic
+│   │   │   └── productService.ts  # Product business logic
+│   │   ├── repositories/
+│   │   │   ├── index.ts           # Repository exports
+│   │   │   ├── orderRepository.ts # Order database queries
+│   │   │   └── productRepository.ts # Product database queries
+│   │   ├── validators/
+│   │   │   ├── index.ts           # Validator exports
+│   │   │   └── orderValidators.ts # Order validation rules
 │   │   ├── middleware/
 │   │   │   ├── errorHandler.ts    # Error handling middleware
 │   │   │   └── validateRequest.ts # Validation middleware
@@ -538,13 +549,32 @@ npm run format   # Format code with Prettier
 2. **Tailwind CSS:** Chose Tailwind for rapid UI development over component libraries like Material UI
 3. **Express vs NestJS:** Used Express for simplicity; NestJS would provide more structure for larger applications
 4. **React Hook Form:** Selected for form handling due to good TypeScript support and performance
-5. **Validation Co-location:** Validation rules are defined in the routes file alongside route definitions using `express-validator`. This approach keeps related code together and is appropriate for this project size. For larger applications, validation could be extracted to a separate `validators/` directory
+
+### Architecture
+
+The backend follows a **layered architecture** pattern for better separation of concerns:
+
+```
+Request → Route → Controller → Service → Repository → Database
+              ↓          ↓           ↓            ↓
+         Validation   HTTP      Business     Database
+                     handling    logic       queries
+```
+
+| Layer | Responsibility |
+|-------|----------------|
+| **Routes** | Define endpoints and apply validation middleware |
+| **Validators** | Input validation rules using express-validator |
+| **Controllers** | Handle HTTP request/response, delegate to services |
+| **Services** | Business logic, orchestration, error handling |
+| **Repositories** | Raw database queries, data access abstraction |
 
 ### Testability
 The codebase is designed with testability in mind:
-- **Separation of Concerns:** Controllers, routes, middleware, and database logic are in separate modules
-- **Modular Functions:** Each function has a single responsibility, making unit testing straightforward
-- **Dependency Injection Ready:** Database module can be easily mocked for testing
+- **Layered Architecture:** Controllers, services, repositories, and validators are in separate modules
+- **Repository Pattern:** Database queries are isolated, making it easy to mock for unit tests
+- **Service Layer:** Business logic can be tested independently of HTTP and database concerns
+- **Dependency Injection Ready:** Each layer can be easily mocked for testing
 - **TypeScript Interfaces:** Clear type definitions make it easier to create test fixtures and mocks
 - **Reusable Components:** Frontend components are isolated and can be tested independently
 

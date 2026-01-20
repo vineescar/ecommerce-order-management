@@ -1,11 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import db from '../config/db';
-import { NotFoundError, BadRequestError } from '../utils/ApiError';
+import { orderService } from '../services/orderService';
+import { productService } from '../services/productService';
 import {
   OrderWithProducts,
   CreateOrderDto,
   UpdateOrderDto,
-  OrderRow,
   Product,
   ApiResponse,
 } from '../types';
@@ -17,34 +16,7 @@ export const getAllOrders = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const result = await db.query<OrderRow>(`
-      SELECT
-        o.id,
-        o.order_description,
-        o.created_at,
-        COALESCE(
-          json_agg(
-            json_build_object(
-              'id', p.id,
-              'product_name', p.product_name,
-              'product_description', p.product_description
-            )
-          ) FILTER (WHERE p.id IS NOT NULL),
-          '[]'
-        ) as products
-      FROM orders o
-      LEFT JOIN order_product_map opm ON o.id = opm.order_id
-      LEFT JOIN products p ON opm.product_id = p.id
-      GROUP BY o.id
-      ORDER BY o.created_at DESC
-    `);
-
-    const orders: OrderWithProducts[] = result.rows.map((row) => ({
-      id: row.id,
-      order_description: row.order_description,
-      created_at: row.created_at,
-      products: row.products || [],
-    }));
+    const orders = await orderService.getAllOrders();
 
     res.json({
       success: true,
@@ -62,44 +34,7 @@ export const getOrderById = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { id } = req.params;
-
-    const result = await db.query<OrderRow>(
-      `
-      SELECT
-        o.id,
-        o.order_description,
-        o.created_at,
-        COALESCE(
-          json_agg(
-            json_build_object(
-              'id', p.id,
-              'product_name', p.product_name,
-              'product_description', p.product_description
-            )
-          ) FILTER (WHERE p.id IS NOT NULL),
-          '[]'
-        ) as products
-      FROM orders o
-      LEFT JOIN order_product_map opm ON o.id = opm.order_id
-      LEFT JOIN products p ON opm.product_id = p.id
-      WHERE o.id = $1
-      GROUP BY o.id
-    `,
-      [id]
-    );
-
-    if (result.rows.length === 0) {
-      throw new NotFoundError(`Order with id ${id} not found`);
-    }
-
-    const row = result.rows[0];
-    const order: OrderWithProducts = {
-      id: row.id,
-      order_description: row.order_description,
-      created_at: row.created_at,
-      products: row.products || [],
-    };
+    const order = await orderService.getOrderById(req.params.id);
 
     res.json({
       success: true,
@@ -116,80 +51,8 @@ export const createOrder = async (
   res: Response<ApiResponse<OrderWithProducts>>,
   next: NextFunction
 ): Promise<void> => {
-  const client = await db.getClient();
-
   try {
-    const { orderDescription, productIds } = req.body;
-
-    // Validate productIds exist
-    if (productIds && productIds.length > 0) {
-      const productCheck = await client.query<{ count: string }>(
-        'SELECT COUNT(*) FROM products WHERE id = ANY($1)',
-        [productIds]
-      );
-
-      if (parseInt(productCheck.rows[0].count) !== productIds.length) {
-        throw new BadRequestError('One or more product IDs are invalid');
-      }
-    }
-
-    await client.query('BEGIN');
-
-    // Create order
-    const orderResult = await client.query<{ id: number; created_at: Date }>(
-      'INSERT INTO orders (order_description) VALUES ($1) RETURNING id, created_at',
-      [orderDescription]
-    );
-
-    const orderId = orderResult.rows[0].id;
-
-    // Insert product mappings
-    if (productIds && productIds.length > 0) {
-      const values = productIds
-        .map((_, index) => `($1, $${index + 2})`)
-        .join(', ');
-
-      await client.query(
-        `INSERT INTO order_product_map (order_id, product_id) VALUES ${values}`,
-        [orderId, ...productIds]
-      );
-    }
-
-    await client.query('COMMIT');
-
-    // Fetch the created order with products
-    const result = await db.query<OrderRow>(
-      `
-      SELECT
-        o.id,
-        o.order_description,
-        o.created_at,
-        COALESCE(
-          json_agg(
-            json_build_object(
-              'id', p.id,
-              'product_name', p.product_name,
-              'product_description', p.product_description
-            )
-          ) FILTER (WHERE p.id IS NOT NULL),
-          '[]'
-        ) as products
-      FROM orders o
-      LEFT JOIN order_product_map opm ON o.id = opm.order_id
-      LEFT JOIN products p ON opm.product_id = p.id
-      WHERE o.id = $1
-      GROUP BY o.id
-    `,
-      [orderId]
-    );
-
-    const row = result.rows[0];
-    const order: OrderWithProducts = {
-      id: row.id,
-      order_description: row.order_description,
-      created_at: row.created_at,
-      products: row.products || [],
-    };
+    const order = await orderService.createOrder(req.body);
 
     res.status(201).json({
       success: true,
@@ -197,10 +60,7 @@ export const createOrder = async (
       message: 'Order created successfully',
     });
   } catch (error) {
-    await client.query('ROLLBACK');
     next(error);
-  } finally {
-    client.release();
   }
 };
 
@@ -210,99 +70,8 @@ export const updateOrder = async (
   res: Response<ApiResponse<OrderWithProducts>>,
   next: NextFunction
 ): Promise<void> => {
-  const client = await db.getClient();
-
   try {
-    const { id } = req.params;
-    const { orderDescription, productIds } = req.body;
-
-    // Check if order exists
-    const orderExists = await client.query(
-      'SELECT id FROM orders WHERE id = $1',
-      [id]
-    );
-
-    if (orderExists.rows.length === 0) {
-      throw new NotFoundError(`Order with id ${id} not found`);
-    }
-
-    // Validate productIds exist
-    if (productIds && productIds.length > 0) {
-      const productCheck = await client.query<{ count: string }>(
-        'SELECT COUNT(*) FROM products WHERE id = ANY($1)',
-        [productIds]
-      );
-
-      if (parseInt(productCheck.rows[0].count) !== productIds.length) {
-        throw new BadRequestError('One or more product IDs are invalid');
-      }
-    }
-
-    await client.query('BEGIN');
-
-    // Update order description if provided
-    if (orderDescription !== undefined) {
-      await client.query(
-        'UPDATE orders SET order_description = $1 WHERE id = $2',
-        [orderDescription, id]
-      );
-    }
-
-    // Update product mappings if provided
-    if (productIds !== undefined) {
-      // Delete existing mappings
-      await client.query('DELETE FROM order_product_map WHERE order_id = $1', [
-        id,
-      ]);
-
-      // Insert new mappings
-      if (productIds.length > 0) {
-        const values = productIds
-          .map((_, index) => `($1, $${index + 2})`)
-          .join(', ');
-
-        await client.query(
-          `INSERT INTO order_product_map (order_id, product_id) VALUES ${values}`,
-          [id, ...productIds]
-        );
-      }
-    }
-
-    await client.query('COMMIT');
-
-    // Fetch updated order
-    const result = await db.query<OrderRow>(
-      `
-      SELECT
-        o.id,
-        o.order_description,
-        o.created_at,
-        COALESCE(
-          json_agg(
-            json_build_object(
-              'id', p.id,
-              'product_name', p.product_name,
-              'product_description', p.product_description
-            )
-          ) FILTER (WHERE p.id IS NOT NULL),
-          '[]'
-        ) as products
-      FROM orders o
-      LEFT JOIN order_product_map opm ON o.id = opm.order_id
-      LEFT JOIN products p ON opm.product_id = p.id
-      WHERE o.id = $1
-      GROUP BY o.id
-    `,
-      [id]
-    );
-
-    const row = result.rows[0];
-    const order: OrderWithProducts = {
-      id: row.id,
-      order_description: row.order_description,
-      created_at: row.created_at,
-      products: row.products || [],
-    };
+    const order = await orderService.updateOrder(req.params.id, req.body);
 
     res.json({
       success: true,
@@ -310,10 +79,7 @@ export const updateOrder = async (
       message: 'Order updated successfully',
     });
   } catch (error) {
-    await client.query('ROLLBACK');
     next(error);
-  } finally {
-    client.release();
   }
 };
 
@@ -324,16 +90,7 @@ export const deleteOrder = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { id } = req.params;
-
-    const result = await db.query(
-      'DELETE FROM orders WHERE id = $1 RETURNING id',
-      [id]
-    );
-
-    if (result.rowCount === 0) {
-      throw new NotFoundError(`Order with id ${id} not found`);
-    }
+    await orderService.deleteOrder(req.params.id);
 
     res.json({
       success: true,
@@ -352,13 +109,11 @@ export const getAllProducts = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const result = await db.query<Product>(
-      'SELECT id, product_name, product_description FROM products ORDER BY id'
-    );
+    const products = await productService.getAllProducts();
 
     res.json({
       success: true,
-      data: result.rows,
+      data: products,
     });
   } catch (error) {
     next(error);
